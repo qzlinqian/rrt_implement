@@ -5,10 +5,13 @@
 
 namespace rrt{
     struct rrtNode{
-        double x = 0;
-        double y = 0;
-        rrtNode* father = nullptr;
+        double x;
+        double y;
+        rrtNode* father;
         std::vector<rrtNode*> children;
+
+        rrtNode();
+        rrtNode(double xx, double yy);
     };
 
     class RRTree{
@@ -19,12 +22,12 @@ namespace rrt{
 
         // construction
         RRTree();
-        RRTree(rrtNode* RootNode);
+        RRTree(double originX, double originY);
 
         //manipulation
         void insert(rrtNode &IntendedFather, rrtNode &IntendedChild);
-        rrtNode* remove(rrtNode* ToBeRemoved);
-        rrtNode* getNode(rrtNode* );
+        int remove(rrtNode* ToBeRemoved);
+        int getNode(rrtNode* );
     };
 }
 

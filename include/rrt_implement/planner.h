@@ -18,7 +18,7 @@ namespace rrt{
     rrtPlanner(){}
 
     rrtNode generateRandomNode();
-    int findNearestNode(rrtNode const &inputNode);
+    IDNumber findNearestNode(const rrtNode &inputNode);
     void stepAMetricForward();
     bool goalIsAchieved();
   };

@@ -31,13 +31,13 @@ rrt::rrtNode rrt::rrtPlanner::generateRandomNode() {
 }
 
 //can only achieved by traverse all the node??
-int rrt::rrtPlanner::findNearestNode(const rrt::rrtNode &inputNode) {
-  int nearestNodeID = -1;
+rrt::IDNumber rrt::rrtPlanner::findNearestNode(const rrt::rrtNode &inputNode) {
+  IDNumber nearestNodeID = -1;
   double MinDistance = MaxRange, presentDistance;
   for (int i=0; i < this->RRT_Tree.getTreeSize(); i++){
     presentDistance = getEuclideanDistance(RRT_Tree.getNode(i), inputNode);
     if (presentDistance < MinDistance){ //no action when "=" --lazy
-      presentDistance = MinDistance;
+      MinDistance = presentDistance;
       nearestNodeID = i;
     }
   }

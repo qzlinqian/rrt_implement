@@ -4,13 +4,16 @@
 #include <vector>
 
 namespace rrt{
+
+  using IDNumber = int;
+
   struct rrtNode{
-    int NodeID;
+    IDNumber NodeID;
     double x;
     double y;
     double phi;
     int father;
-    std::vector<int> children;
+    std::vector<IDNumber> children;
 
     rrtNode(double xx=0, double yy=0, double ph=0, int ff=-1);
     rrtNode(const rrtNode &p);
@@ -27,11 +30,11 @@ namespace rrt{
     RRTree(double originX, double originY, double originPhi);
 
     //manipulation
-    void insert(int IntendedFather, double xx, double yy, double ph); //know the father
+    void insert(IDNumber IntendedFather, double xx, double yy, double ph); //know the father
     void insert(double xx, double yy, double ph);//not know the father
-    rrtNode remove(int ToBeRemoved);
+    rrtNode remove(IDNumber ToBeRemoved);
     std::vector<rrt::rrtNode>& getTree();
-    rrtNode& getNode(int ID);
+    rrtNode& getNode(IDNumber ID);
     int getTreeSize();
   };
 

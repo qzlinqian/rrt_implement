@@ -48,7 +48,7 @@ rrt::RRTree::RRTree(double originX, double originY, double originPhi) {
 //    root = &rrtTree.front();
 }
 
-void rrt::RRTree::insert(int IntendedFather, double xx, double yy, double ph) { //know the father
+void rrt::RRTree::insert(IDNumber IntendedFather, double xx, double yy, double ph) { //know the father
   rrt::rrtNode temp(xx, yy, ph,IntendedFather);
   temp.NodeID = int(rrtTree.size());
   rrtTree.push_back(temp);
@@ -61,7 +61,7 @@ void rrt::RRTree::insert(double xx, double yy, double ph) { //not know the fathe
   rrtTree.push_back(temp);
 }
 
-rrt::rrtNode rrt::RRTree::remove(int ToBeRemoved) {
+rrt::rrtNode rrt::RRTree::remove(IDNumber ToBeRemoved) {
   rrt::rrtNode temp = rrtTree[ToBeRemoved];
   rrtTree.erase(rrtTree.begin()+ToBeRemoved);
   return temp;
@@ -71,7 +71,7 @@ std::vector<rrt::rrtNode>& rrt::RRTree::getTree() {
   return rrtTree;
 }
 
-rrt::rrtNode& rrt::RRTree::getNode(int ID) {  //avoid copy constructor
+rrt::rrtNode& rrt::RRTree::getNode(IDNumber ID) {  //avoid copy constructor
   return rrtTree[ID];
 }
 

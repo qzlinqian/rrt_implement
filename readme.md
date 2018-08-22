@@ -9,6 +9,7 @@
 - [x] create basic structure of tree and node
 - [x] complete insert & remove function
 - [x] grow the tree
+- [ ] collision checking (FCL)
 
 
 ###### world

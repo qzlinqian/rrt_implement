@@ -5,30 +5,44 @@
 
 namespace rrt{
     struct rrtNode{
+        int NodeID;
         double x;
         double y;
-        rrtNode* father;
-        std::vector<rrtNode*> children;
+        double phi;
+        int father;
+        std::vector<int> children;
 
-        rrtNode();
-        rrtNode(double xx, double yy);
+        rrtNode(double xx=0, double yy=0, double ph=0, int ff=-1);
+        rrtNode(const rrtNode &p);
     };
 
     class RRTree{
     private:
-        std::vector<rrtNode> rrtTree;
+        static std::vector<rrtNode> rrtTree;
     public:
-        rrtNode* root;
+//        rrtNode* root;
 
         // construction
-        RRTree();
-        RRTree(double originX, double originY);
+        RRTree(){};
+        RRTree(double originX, double originY, double originPhi);
 
         //manipulation
-        void insert(rrtNode &IntendedFather, rrtNode &IntendedChild);
-        int remove(rrtNode* ToBeRemoved);
-        int getNode(rrtNode* );
+        void insert(int IntendedFather, double xx, double yy, double ph); //know the father
+        void insert(double xx, double yy, double ph);//not know the father
+        rrtNode remove(int ToBeRemoved);
+        std::vector<rrt::rrtNode> getTree();
+        rrtNode getNode(int ID);
     };
+
+    extern const double xRange,
+                  yRange,
+                  phiRange;
+
+    extern const double xMetric,
+                  yMetric,
+                  phiMetric;
+
+    double getEuclideanDistance(rrtNode Point1, rrtNode Point2);
 }
 
 #endif

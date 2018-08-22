@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rrt_implement)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+# Compile as C++11, supported in ROS Kinetic and newer
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -127,11 +127,14 @@ include_directories(include
 ## Declare a C++ library
 add_library(rrt_implement
   src/rrt.cpp
+  src/planner.cpp
 )
 
-add_executable(rrt src/rrt.cpp)
-add_dependencies(rrt rrt_implement)
-target_link_libraries(rrt rrt_implement ${catkin_LIBRARIES})
+
+add_executable(rrtPlanner src/rrtPlanner.cpp)
+add_dependencies(rrtPlanner rrt_implement)
+target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

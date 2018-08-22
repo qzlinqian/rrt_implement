@@ -8,22 +8,22 @@
 #include <rrt_implement/rrt.h>
 
 namespace rrt{
-    class rrtPlanner{
-    private:
-        RRTree RRT_Tree;
-        rrtNode startPos;
-        rrtNode goalPos;
-    public:
-        rrtPlanner(rrtNode &start, rrtNode &goal);
-        rrtPlanner(){}
+  class rrtPlanner{
+  private:
+    RRTree RRT_Tree;
+    rrtNode startPos;
+    rrtNode goalPos;
+  public:
+    rrtPlanner(rrtNode &start, rrtNode &goal);
+    rrtPlanner(){}
 
-        void generateRandomNode();
-        void findNearestNode();
-        void stepAMetricForward();
-        bool goalIsAchieved();
-    };
+    rrtNode generateRandomNode();
+    int findNearestNode(rrtNode const &inputNode);
+    void stepAMetricForward();
+    bool goalIsAchieved();
+  };
 
-    bool collisionChecking();
+  bool collisionChecking();
 }
 
 #endif //PROJECT_PLANNER_H

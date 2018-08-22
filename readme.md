@@ -8,7 +8,7 @@
 ###### algorithm itself
 - [x] create basic structure of tree and node
 - [x] complete insert & remove function
-- [ ] grow the tree
+- [x] grow the tree
 
 
 ###### world

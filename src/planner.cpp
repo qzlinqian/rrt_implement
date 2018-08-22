@@ -9,37 +9,60 @@
 #include <rrt_implement/rrt.h>
 #include <rrt_implement/planner.h>
 
-rrt::rrtPlanner::rrtPlanner(rrt::rrtNode &start, rrt::rrtNode &goal):
-    RRT_Tree(start.x, start.y, start.phi) {
+rrt::PlanningAct::PlanningAct(rrt::Position &start, rrt::Position &goal):
+    RRT_Tree(start) {
   startPos = start;
   goalPos = goal;
 }
 
-rrt::rrtNode rrt::rrtPlanner::generateRandomNode() {
-  rrtNode randomNode;
+rrt::Position rrt::PlanningAct::generateRandomPos() {
+  Position randomPos;
   /*std::srand((unsigned)time(nullptr));
   randomNode.x = rand()/RAND_MAX * xRange; //get random x position
 * it's not safe, use c++11 random library instead */
-  //reference to https://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
+  //https://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_real_distribution<double> dis(0.0, 1.0);
-  randomNode.x = dis(gen) * xRange;
-  randomNode.y = dis(gen) * yRange;
-  randomNode.phi = dis(gen) * phiRange;
-  return randomNode;
+  randomPos.x = dis(gen) * xRange;
+  randomPos.y = dis(gen) * yRange;
+  randomPos.phi = dis(gen) * phiRange;
+  return randomPos;
 }
 
 //can only achieved by traverse all the node??
-rrt::IDNumber rrt::rrtPlanner::findNearestNode(const rrt::rrtNode &inputNode) {
+//rrt::IDNumber rrt::PlanningAct::findNearestNode(rrt::Position randomPos) {
+//rrt::Position rrt::PlanningAct::findNewPos() {
+bool rrt::PlanningAct::getNewNode() {
   IDNumber nearestNodeID = -1;
+  Position randomPos = generateRandomPos();
   double MinDistance = MaxRange, presentDistance;
   for (int i=0; i < this->RRT_Tree.getTreeSize(); i++){
-    presentDistance = getEuclideanDistance(RRT_Tree.getNode(i), inputNode);
+    presentDistance = getEuclideanDistance(RRT_Tree.getNode(i), randomPos);
     if (presentDistance < MinDistance){ //no action when "=" --lazy
       MinDistance = presentDistance;
       nearestNodeID = i;
     }
   }
-  return nearestNodeID;
+  //nearestNodeID is the nearest Node to the random position in the tree
+//  return nearestNodeID;
+  if (nearestNodeID != -1){ //find a new point from the nearest node
+    Position newPos;
+    rrtNode nearestNode = RRT_Tree.getNode(nearestNodeID);
+    newPos.x = nearestNode.x + (randomPos.x-nearestNode.x)/MinDistance * xMetric;
+    newPos.y = nearestNode.y + (randomPos.y-nearestNode.y)/MinDistance * yMetric;
+    newPos.phi = nearestNode.phi + (randomPos.phi-nearestNode.phi)/MinDistance * phiMetric;
+//    return newPos;
+    if (collisionChecking(nearestNode, newPos)) {  //can go through
+      RRT_Tree.insert(newPos);
+      return true;
+    } else
+      return false;
+  } else
+    return false;
 }
+
+//need to be completed
+bool rrt::PlanningAct::collisionChecking(rrt::rrtNode &Point1, rrt::Position &Point2) { return true;}
+
+//void rrt::PlanningAct::stepAMetricForward(rrt::rrtNode &nearestNode, rrt::Position &randomPos)

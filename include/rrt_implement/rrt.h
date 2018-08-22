@@ -7,6 +7,15 @@ namespace rrt{
 
   using IDNumber = int;
 
+  struct Position{
+    double x;
+    double y;
+    double phi;
+
+    Position(double xx=0, double yy=0, double ph=0);
+    Position(Position const &p);
+  };
+
   struct rrtNode{
     IDNumber NodeID;
     double x;
@@ -16,7 +25,7 @@ namespace rrt{
     std::vector<IDNumber> children;
 
     rrtNode(double xx=0, double yy=0, double ph=0, int ff=-1);
-    rrtNode(const rrtNode &p);
+    rrtNode(rrtNode const &p);
   };
 
   class RRTree{
@@ -28,10 +37,11 @@ namespace rrt{
     // construction
     RRTree(){};
     RRTree(double originX, double originY, double originPhi);
+    RRTree(Position const &originPos);
 
     //manipulation
-    void insert(IDNumber IntendedFather, double xx, double yy, double ph); //know the father
-    void insert(double xx, double yy, double ph);//not know the father
+    void insert(double xx, double yy, double ph, IDNumber IntendedFather=-1); //have father value passed: know the father
+    void insert(const Position &pos, IDNumber IntendedFather=-1);
     rrtNode remove(IDNumber ToBeRemoved);
     std::vector<rrt::rrtNode>& getTree();
     rrtNode& getNode(IDNumber ID);
@@ -48,7 +58,7 @@ namespace rrt{
       yMetric,
       phiMetric;
 
-  double getEuclideanDistance(const rrtNode &Point1, const rrtNode &Point2);
+  double getEuclideanDistance(rrtNode const &Point1, Position const &Point2);
 }
 
 #endif

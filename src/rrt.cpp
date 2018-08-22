@@ -18,6 +18,21 @@ const double rrt::xMetric = 0.1, //Metric of x
 
 const double rrt::MaxRange = xRange/xMetric + yRange/yMetric + phiRange/phiMetric;
 
+
+//Position
+rrt::Position::Position(double xx, double yy, double ph){
+  x = xx;
+  y = yy;
+  phi = ph;
+}
+
+rrt::Position::Position(const rrt::Position &p) {
+  x = p.x;
+  y = p.y;
+  phi = p.phi;
+}
+
+
 rrt::rrtNode::rrtNode(double xx, double yy, double ph, int ff) {
   x = xx;
   y = yy;
@@ -27,7 +42,7 @@ rrt::rrtNode::rrtNode(double xx, double yy, double ph, int ff) {
 }
 
 //????? need to think through
-rrt::rrtNode::rrtNode(const rrt::rrtNode &p) {
+rrt::rrtNode::rrtNode(rrt::rrtNode const &p) {
   x = p.x;
   y = p.y;
   phi = p.phi;
@@ -48,17 +63,24 @@ rrt::RRTree::RRTree(double originX, double originY, double originPhi) {
 //    root = &rrtTree.front();
 }
 
-void rrt::RRTree::insert(IDNumber IntendedFather, double xx, double yy, double ph) { //know the father
+rrt::RRTree::RRTree(rrt::Position const &originPos) {
+  rrtNode temp(originPos.x, originPos.y, originPos.phi, 0);
+  temp.NodeID = int(rrtTree.size());
+  rrtTree.push_back(temp);
+}
+
+void rrt::RRTree::insert(double xx, double yy, double ph, IDNumber IntendedFather) { //know the father
   rrt::rrtNode temp(xx, yy, ph,IntendedFather);
   temp.NodeID = int(rrtTree.size());
   rrtTree.push_back(temp);
   rrtTree[IntendedFather].children.push_back(temp.NodeID);
 }
 
-void rrt::RRTree::insert(double xx, double yy, double ph) { //not know the father
-  rrt::rrtNode temp(xx, yy, ph);
+void rrt::RRTree::insert(rrt::Position const &pos, rrt::IDNumber IntendedFather) {
+  rrt::rrtNode temp(pos.x, pos.y, pos.phi);
   temp.NodeID = int(rrtTree.size());
   rrtTree.push_back(temp);
+  rrtTree[IntendedFather].children.push_back(temp.NodeID);
 }
 
 rrt::rrtNode rrt::RRTree::remove(IDNumber ToBeRemoved) {
@@ -75,7 +97,7 @@ rrt::rrtNode& rrt::RRTree::getNode(IDNumber ID) {  //avoid copy constructor
   return rrtTree[ID];
 }
 
-double rrt::getEuclideanDistance(rrt::rrtNode const &Point1, rrt::rrtNode const &Point2) {
+double rrt::getEuclideanDistance(rrt::rrtNode const &Point1, rrt::Position const &Point2) {
   //avoid copy constructor
   return std::abs((Point1.x-Point2.x)/xMetric)
          +std::abs((Point1.y-Point2.y)/yMetric)

@@ -66,3 +66,7 @@ bool rrt::PlanningAct::getNewNode() {
 bool rrt::PlanningAct::collisionChecking(rrt::rrtNode &Point1, rrt::Position &Point2) { return true;}
 
 //void rrt::PlanningAct::stepAMetricForward(rrt::rrtNode &nearestNode, rrt::Position &randomPos)
+
+bool rrt::PlanningAct::goalIsAchieved() {
+  return (getEuclideanDistance(RRT_Tree.getTopNode(), goalPos) < NEAR_TO_GOAL);
+}

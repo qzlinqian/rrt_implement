@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   visualization_msgs
+  moveit_core
+  eigen_conversions
 )
 
 ## System dependencies are found with CMake's conventions
@@ -134,6 +136,10 @@ add_library(rrt_implement
 add_executable(rrtPlanner src/rrtPlanner.cpp)
 add_dependencies(rrtPlanner rrt_implement)
 target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
+
+add_executable(sceneDisp src/scene.cpp)
+add_dependencies(sceneDisp rrt_implement)
+target_link_libraries(sceneDisp rrt_implement ${catkin_LIBRARIES})
 
 
 ## Add cmake target dependencies of the library

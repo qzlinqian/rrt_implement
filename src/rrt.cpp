@@ -107,3 +107,7 @@ double rrt::getEuclideanDistance(rrt::rrtNode const &Point1, rrt::Position const
 int rrt::RRTree::getTreeSize() {
   return int(rrtTree.size());
 }
+
+rrt::rrtNode& rrt::RRTree::getTopNode() {
+  return rrtTree.back();
+}

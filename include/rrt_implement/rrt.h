@@ -46,6 +46,7 @@ namespace rrt{
     std::vector<rrt::rrtNode>& getTree();
     rrtNode& getNode(IDNumber ID);
     int getTreeSize();
+    rrtNode& getTopNode();
   };
 
   extern const double xRange,

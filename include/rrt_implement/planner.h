@@ -1,11 +1,13 @@
 // to implement the rrt planner based on the configuration in rrt.h & rrt.cpp
-// Created by lesley on 18-8-21.
+// Created by Qian on 18-8-21.
 //
 
 #ifndef PROJECT_PLANNER_H
 #define PROJECT_PLANNER_H
 
 #include <rrt_implement/rrt.h>
+
+#define NEAR_TO_GOAL 0.0001
 
 namespace rrt{
   class PlanningAct{

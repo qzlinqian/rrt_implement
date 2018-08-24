@@ -15,7 +15,7 @@ rrt::PlanningAct::PlanningAct(rrt::Position &start, rrt::Position &goal):
   goalPos = goal;
 }
 
-rrt::Position rrt::PlanningAct::generateRandomPos() {
+rrt::Position rrt::generateRandomPos() {
   Position randomPos;
   /*std::srand((unsigned)time(nullptr));
   randomNode.x = rand()/RAND_MAX * xRange; //get random x position

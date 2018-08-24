@@ -19,7 +19,7 @@ namespace rrt{
     PlanningAct(Position &start, Position &goal);
     PlanningAct(){}
 
-    Position generateRandomPos();
+    friend Position generateRandomPos();
 //    IDNumber findNearestNode(rrt::Position randomPos);
 //    void stepAMetricForward(rrtNode &nearestNode, Position& randomPos);  combine the two to reduce parameter pass
 //    Position findNewPos(); followed with insert, combine again
@@ -30,6 +30,8 @@ namespace rrt{
     bool goalIsAchieved();
     bool collisionChecking(rrtNode &Point1, Position &Point2);
   };
+
+  Position generateRandomPos();
 
 
 }

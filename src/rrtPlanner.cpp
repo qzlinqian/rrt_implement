@@ -25,7 +25,7 @@
 #include <trajectory_msgs/MultiDOFJointTrajectory.h>
 #include <trajectory_msgs/MultiDOFJointTrajectoryPoint.h>
 #include <geometry_msgs/Transform.h>
-#include <sensor_msgs/JointState.h>
+//#include <sensor_msgs/JointState.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
 #include <geometry_msgs/Twist.h>
@@ -36,6 +36,8 @@
 
 #include <rrt_implement/rrt.h>
 #include <rrt_implement/planner.h>
+#include <rviz_visual_tools/rviz_visual_tools.h>
+#include <moveit_visual_tools/moveit_visual_tools.h>
 
 int main(int argc, char **argv){
   //init
@@ -45,21 +47,32 @@ int main(int argc, char **argv){
   spinner.start();
   sleep(10);
 
-  //MoveGroupInterface & PlanningSceneInterface setup
-  robot_model_loader::RobotModelLoader robotModelLoader("robot_description");
-  robot_model::RobotModelPtr robotModel = robotModelLoader.getModel(); //const?
-  moveit::planning_interface::PlanningSceneInterface planningSceneInterface/*(new planning_scene::PlanningScene(robotModel))*/;
-  moveit::planning_interface::MoveGroupInterface group("base_link");
+  //MoveGroupInterface setup
+  static const std::string PLANNING_GROUP = "base_link";
+  moveit::planning_interface::MoveGroupInterface group(PLANNING_GROUP);
 
-  //collision object define with msg
-  moveit_msgs::CollisionObject collisionObject;
-  std::string planningFrame = group.getPlanningFrame();
-  std::cout<<planningFrame<<std::endl;
+  //PlanningSceneInterface setup, used only for illustration
+  //look up the robot description on ROS parameter server ad construct a RobotModel to use
+  robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
+  const robot_model::RobotModelPtr robot_model = robot_model_loader.getModel(); //const?
+  //create a RobotState and JointModelGroup to keep track of the current robot pose and planning group
+//  robot_state::RobotStatePtr robotStatePtr(new robot_state::RobotState(robot_model));
+//  const robot_state::JointModelGroup* joint_model_group = robotStatePtr->getJointModelGroup(PLANNING_GROUP);
+  //no ROS pluginlib
 
-  collisionObject.header.frame_id = planningFrame;
+  //construct a PlanningScene
+  planning_scene::PlanningScenePtr planning_scene(new planning_scene::PlanningScene(robot_model));
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface/*(new planning_scene::PlanningScene(robotModel))*/;
+
+  //collision object msg define
+  moveit_msgs::CollisionObject collision_object;
+  const std::string planning_frame = group.getPlanningFrame();
+  std::cout<<"Planning frame: "<<planning_frame<<std::endl;
+
+  collision_object.header.frame_id = planning_frame;
 
   //the id of the object is used to identify it
-  collisionObject.id = "box1";
+  collision_object.id = "box1";
 
   //define the box to be added to the world
   shape_msgs::SolidPrimitive primitive;
@@ -75,24 +88,60 @@ int main(int argc, char **argv){
   box_pos.position.y = 0.3;
   box_pos.position.z = 0;
 
-  collisionObject.primitives.push_back(primitive);
-  collisionObject.plane_poses.push_back(box_pos);
-  collisionObject.operation = collisionObject.ADD;
+  collision_object.primitives.push_back(primitive);
+  collision_object.plane_poses.push_back(box_pos);
+  collision_object.operation = collision_object.ADD;
 
   std::vector<moveit_msgs::CollisionObject> collision_objects;
-  collision_objects.push_back(collisionObject);
+  collision_objects.push_back(collision_object);
 
   //add the collision object into the world
   ROS_INFO_NAMED("rrt_implement", "Add an object to the world");
-  planningSceneInterface.addCollisionObjects(collision_objects);
+  planning_scene_interface.addCollisionObjects(collision_objects);
 
   //set up trajectory displayer
   ros::Publisher display_publisher = node_handle.advertise<moveit_msgs::DisplayTrajectory>("/move_group/display_planned_path", 1, true);
 
   //display trajectory msg
-  moveit_msgs::DisplayTrajectory displayTrajectory;
+  moveit_msgs::DisplayTrajectory display_trajectory;
 
   //get valid joint -- not
+
+
+  //visualization ???
+  namespace rvt = rviz_visual_tools;
+  moveit_visual_tools::MoveItVisualTools visual_tools(PLANNING_GROUP);
+  visual_tools.deleteAllMarkers();
+
+/*  // Remote control is an introspection tool that allows users to step through a high level script
+  // via buttons and keyboard shortcuts in RViz
+  visual_tools.loadRemoteControl();
+
+  // RViz provides many types of markers, in this demo we will use text, cylinders, and spheres
+  Eigen::Affine3d text_pose = Eigen::Affine3d::Identity();
+  text_pose.translation().z() = 1.75;
+  visual_tools.publishText(text_pose, "Motion Planning API Demo", rvt::WHITE, rvt::XLARGE);
+
+  //Batch publishing is used to reduce the number of messages being sent to RViz for large visualizations
+  visual_tools.trigger();
+
+  // Sleep a little to allow time to startup rviz, etc..
+  //This ensures that visual_tools.prompt() isn't lost in a sea of logs
+  ros::Duration(10).sleep();
+
+  // We can also use visual_tools to wait for user input
+  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to start the demo");
+*/
+
+//scene setting up ends
+
+  //planning start
+  group.startStateMonitor();
+  group.setStartStateToCurrentState();
+
+  rrt::Position goal_state = rrt::generateRandomPos();
+
+
 
   sleep(10);
 

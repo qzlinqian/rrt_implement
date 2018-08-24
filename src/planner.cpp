@@ -62,11 +62,16 @@ bool rrt::PlanningAct::getNewNode() {
     return false;
 }
 
-//need to be completed
-bool rrt::PlanningAct::collisionChecking(rrt::rrtNode &Point1, rrt::Position &Point2) { return true;}
+/*int rrt::PlanningAct::getTreeSize() {
+  return RRT_Tree.getTreeSize();
+}*/
 
 //void rrt::PlanningAct::stepAMetricForward(rrt::rrtNode &nearestNode, rrt::Position &randomPos)
 
 bool rrt::PlanningAct::goalIsAchieved() {
   return (getEuclideanDistance(RRT_Tree.getTopNode(), goalPos) < NEAR_TO_GOAL);
 }
+
+
+//need to be completed
+bool rrt::collisionChecking(rrt::rrtNode &Point1, rrt::Position &Point2) { return true;}

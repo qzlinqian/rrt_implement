@@ -12,14 +12,15 @@
 namespace rrt{
   class PlanningAct{
   private:
-    RRTree RRT_Tree;
     Position startPos;
     Position goalPos;
   public:
+    RRTree RRT_Tree;
+
     PlanningAct(Position &start, Position &goal);
     PlanningAct(){}
 
-    friend Position generateRandomPos();
+//    friend Position generateRandomPos();
 //    IDNumber findNearestNode(rrt::Position randomPos);
 //    void stepAMetricForward(rrtNode &nearestNode, Position& randomPos);  combine the two to reduce parameter pass
 //    Position findNewPos(); followed with insert, combine again
@@ -28,10 +29,12 @@ namespace rrt{
      * from the nearest point towards the random point*/
     bool getNewNode();
     bool goalIsAchieved();
-    bool collisionChecking(rrtNode &Point1, Position &Point2);
+//    bool collisionChecking(rrtNode &Point1, Position &Point2);
+//    int getTreeSize();
   };
 
   Position generateRandomPos();
+  bool collisionChecking(rrtNode &Point1, Position &Point2);
 
 
 }

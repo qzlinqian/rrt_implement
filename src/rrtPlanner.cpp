@@ -4,33 +4,35 @@
 
 #include <ros/ros.h>
 #include <cstdlib>
+#include <iostream>
 #include <vector>
 
-#include "geometry_msgs/Point.h"
+//#include "geometry_msgs/Point.h"
 
-#include <geometric_shapes/shape_operations.h>
+//#include <geometric_shapes/shape_operations.h>
 
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/planning_scene/planning_scene.h>
 
-#include <moveit_msgs/DisplayRobotState.h>
+//#include <moveit_msgs/DisplayRobotState.h>
 #include <moveit_msgs/DisplayTrajectory.h>
 #include <moveit_msgs/PlanningScene.h>
-#include <moveit_msgs/AttachedCollisionObject.h>
+//#include <moveit_msgs/AttachedCollisionObject.h>
 #include <moveit_msgs/CollisionObject.h>
 
 #include <moveit_msgs/RobotTrajectory.h>
 #include <moveit_msgs/RobotState.h>
 #include <trajectory_msgs/MultiDOFJointTrajectory.h>
 #include <trajectory_msgs/MultiDOFJointTrajectoryPoint.h>
-#include <geometry_msgs/Transform.h>
+//#include <geometry_msgs/Transform.h>
 //#include <sensor_msgs/JointState.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
-#include <geometry_msgs/Twist.h>
-#include <geometry_msgs/Vector3.h>
-#include <geometry_msgs/Quaternion.h>
+//#include <geometry_msgs/Twist.h>
+//#include <geometry_msgs/Vector3.h>
+//#include <geometry_msgs/Quaternion.h>
+#include <geometry_msgs/Pose2D.h>
 
 #include <moveit/robot_model_loader/robot_model_loader.h>
 
@@ -139,7 +141,28 @@ int main(int argc, char **argv){
   group.startStateMonitor();
   group.setStartStateToCurrentState();
 
-  rrt::Position goal_state = rrt::generateRandomPos();
+  //set start & goal state
+  rrt::Position goal_state = rrt::generateRandomPos(), start_state;
+  start_state.x = group.getCurrentState()->getVariablePositions()[0];
+  start_state.y = group.getCurrentState()->getVariablePositions()[1];
+  start_state.phi = group.getCurrentRPY(PLANNING_GROUP)[0];
+
+  //init planner
+  rrt::PlanningAct planning_act_rrt(start_state, goal_state);
+
+  while (! planning_act_rrt.goalIsAchieved()){
+    bool acted = planning_act_rrt.getNewNode();
+    if (acted){
+      std::cout<<"NODE"<<planning_act_rrt.RRT_Tree.getTreeSize()<<std::endl;
+      rrt::rrtNode newAddedNode = planning_act_rrt.RRT_Tree.getTopNode();
+      geometry_msgs::Pose2D value;
+      value.x = newAddedNode.x;
+      value.y = newAddedNode.y;
+      value.theta = newAddedNode.phi;
+      std::cout<<"X: "<<value.x<<"Y: "<< value.y<<"\\Phi: "<<value.theta<<std::endl;
+    }
+    sleep(1);
+  }
 
 
 

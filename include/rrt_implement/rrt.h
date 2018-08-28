@@ -29,9 +29,10 @@ namespace rrt{
   };
 
   class RRTree{
-  private:
-    static std::vector<rrtNode> rrtTree;
+//  private:
   public:
+    static std::vector<rrtNode> rrtTree;
+//  public:
 //        rrtNode* root;
 
     // construction
@@ -45,9 +46,9 @@ namespace rrt{
     rrtNode remove(IDNumber ToBeRemoved);
     rrtNode pop();
     std::vector<rrt::rrtNode>& getTree();
-    rrtNode& getNode(IDNumber ID);
+//    rrtNode& getNode(IDNumber ID);
     int getTreeSize();
-    rrtNode& getTopNode();
+//    rrtNode& getTopNode();
   };
 
   extern const double xRange,

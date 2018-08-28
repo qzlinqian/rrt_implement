@@ -15,6 +15,8 @@
 #include <ros/builtin_message_traits.h>
 #include <ros/message_operations.h>
 
+#include <rrt_implement/position.h>
+#include <rrt_implement/ellipsoid.h>
 
 namespace rrt_implement
 {
@@ -24,27 +26,22 @@ struct trajectory_
   typedef trajectory_<ContainerAllocator> Type;
 
   trajectory_()
-    : x(0.0)
-    , y(0.0)
-    , step(0)  {
+    : point3d()
+    , model()  {
     }
   trajectory_(const ContainerAllocator& _alloc)
-    : x(0.0)
-    , y(0.0)
-    , step(0)  {
+    : point3d(_alloc)
+    , model(_alloc)  {
   (void)_alloc;
     }
 
 
 
-   typedef double _x_type;
-  _x_type x;
+   typedef  ::rrt_implement::position_<ContainerAllocator>  _point3d_type;
+  _point3d_type point3d;
 
-   typedef double _y_type;
-  _y_type y;
-
-   typedef int32_t _step_type;
-  _step_type step;
+   typedef  ::rrt_implement::ellipsoid_<ContainerAllocator>  _model_type;
+  _model_type model;
 
 
 
@@ -80,7 +77,7 @@ namespace message_traits
 
 
 
-// BOOLTRAITS {'IsFixedSize': True, 'IsMessage': True, 'HasHeader': False}
+// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': False}
 // {'std_msgs': ['/opt/ros/kinetic/share/std_msgs/cmake/../msg'], 'visualization_msgs': ['/opt/ros/kinetic/share/visualization_msgs/cmake/../msg'], 'geometry_msgs': ['/opt/ros/kinetic/share/geometry_msgs/cmake/../msg'], 'rrt_implement': ['/home/lesley/ros-practice/summer/src/rrt_implement/msg']}
 
 // !!!!!!!!!!! ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_parsed_fields', 'constants', 'fields', 'full_name', 'has_header', 'header_present', 'names', 'package', 'parsed_fields', 'short_name', 'text', 'types']
@@ -90,12 +87,12 @@ namespace message_traits
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::rrt_implement::trajectory_<ContainerAllocator> >
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::rrt_implement::trajectory_<ContainerAllocator> const>
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
@@ -124,12 +121,12 @@ struct MD5Sum< ::rrt_implement::trajectory_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "750670ae4b3357249cdb09ef2b39797d";
+    return "ea0b13cc661285875c8beb2b9c2f22c6";
   }
 
   static const char* value(const ::rrt_implement::trajectory_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x750670ae4b335724ULL;
-  static const uint64_t static_value2 = 0x9cdb09ef2b39797dULL;
+  static const uint64_t static_value1 = 0xea0b13cc66128587ULL;
+  static const uint64_t static_value2 = 0x5c8beb2b9c2f22c6ULL;
 };
 
 template<class ContainerAllocator>
@@ -148,9 +145,20 @@ struct Definition< ::rrt_implement::trajectory_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "float64 x\n\
+    return "position point3d\n\
+ellipsoid model\n\
+================================================================================\n\
+MSG: rrt_implement/position\n\
+float64 x\n\
 float64 y\n\
-int32 step\n\
+float64 phi\n\
+\n\
+================================================================================\n\
+MSG: rrt_implement/ellipsoid\n\
+float64[] semi_axes\n\
+float64[] center\n\
+float64 epsilon\n\
+float64 angle\n\
 ";
   }
 
@@ -169,9 +177,8 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.x);
-      stream.next(m.y);
-      stream.next(m.step);
+      stream.next(m.point3d);
+      stream.next(m.model);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -190,12 +197,12 @@ struct Printer< ::rrt_implement::trajectory_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::rrt_implement::trajectory_<ContainerAllocator>& v)
   {
-    s << indent << "x: ";
-    Printer<double>::stream(s, indent + "  ", v.x);
-    s << indent << "y: ";
-    Printer<double>::stream(s, indent + "  ", v.y);
-    s << indent << "step: ";
-    Printer<int32_t>::stream(s, indent + "  ", v.step);
+    s << indent << "point3d: ";
+    s << std::endl;
+    Printer< ::rrt_implement::position_<ContainerAllocator> >::stream(s, indent + "  ", v.point3d);
+    s << indent << "model: ";
+    s << std::endl;
+    Printer< ::rrt_implement::ellipsoid_<ContainerAllocator> >::stream(s, indent + "  ", v.model);
   }
 };
 

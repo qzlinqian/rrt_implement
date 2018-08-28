@@ -24,7 +24,7 @@
 
 #include <visualization_msgs/Marker.h>
 #include <rrt_implement/rrt.h>
-#include <rrt_implement/planner.h>
+//#include <rrt_implement/planner.h>
 
 namespace rrt{
   class BasicMesh{

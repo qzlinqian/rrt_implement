@@ -46,7 +46,7 @@ rrt::rrtNode::rrtNode(rrt::rrtNode const &p) {
   x = p.x;
   y = p.y;
   phi = p.phi;
-  father = -1; //???
+  father = p.father; //???
   NodeID = -1; //???
 }
 
@@ -103,9 +103,9 @@ std::vector<rrt::rrtNode>& rrt::RRTree::getTree() {
   return rrtTree;
 }
 
-rrt::rrtNode& rrt::RRTree::getNode(IDNumber ID) {  //avoid copy constructor
-  return rrtTree[ID];
-}
+//rrt::rrtNode& rrt::RRTree::getNode(IDNumber ID) {  //avoid copy constructor
+//  return rrtTree[ID];
+//}
 
 double rrt::getEuclideanDistance(rrt::rrtNode const &Point1, rrt::Position const &Point2) {
   //avoid copy constructor
@@ -120,6 +120,7 @@ int rrt::RRTree::getTreeSize() {
   return int(rrtTree.size());
 }
 
+/*
 rrt::rrtNode& rrt::RRTree::getTopNode() {
   return rrtTree.back();
-}
+}*/

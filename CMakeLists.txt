@@ -58,15 +58,17 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files (
   FILES
   position.msg
-  trajectory.msg
+  ellipsoid.msg
+#  trajectory.msg
+#  world.msg
 )
 
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
+# Generate services in the 'srv' folder
+#add_service_files(
+#  FILES
+#  ellipsoid_points_gen.srv
 #   Service2.srv
-# )
+#)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -130,13 +132,13 @@ include_directories(include
 ## Declare a C++ library
 add_library(rrt_implement
   src/rrt.cpp
-  src/planner.cpp
+#  src/planner.cpp
 )
 
 
-add_executable(rrtPlanner src/rrtPlanner.cpp)
-add_dependencies(rrtPlanner rrt_implement)
-target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
+#add_executable(rrtPlanner src/planner.cpp)
+#add_dependencies(rrtPlanner rrt_implement)
+#target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
 
 add_executable(sceneDisp src/scene.cpp)
 add_dependencies(sceneDisp rrt_implement)

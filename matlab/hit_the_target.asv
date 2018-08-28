@@ -1,6 +1,0 @@
-function ends=hit_the_target(newpos_x,newpos_y,goal_x,goal_y)
-if (abs(newpos_x-goal_x)+abs(newpos_y-goal_y) < 1)
-    ends = true;
-else
-    ends = false;
-end

@@ -26,19 +26,19 @@ struct trajectory_
   typedef trajectory_<ContainerAllocator> Type;
 
   trajectory_()
-    : point3d()
+    : points()
     , model()  {
     }
   trajectory_(const ContainerAllocator& _alloc)
-    : point3d(_alloc)
+    : points(_alloc)
     , model(_alloc)  {
   (void)_alloc;
     }
 
 
 
-   typedef  ::rrt_implement::position_<ContainerAllocator>  _point3d_type;
-  _point3d_type point3d;
+   typedef std::vector< ::rrt_implement::position_<ContainerAllocator> , typename ContainerAllocator::template rebind< ::rrt_implement::position_<ContainerAllocator> >::other >  _points_type;
+  _points_type points;
 
    typedef  ::rrt_implement::ellipsoid_<ContainerAllocator>  _model_type;
   _model_type model;
@@ -121,12 +121,12 @@ struct MD5Sum< ::rrt_implement::trajectory_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "ea0b13cc661285875c8beb2b9c2f22c6";
+    return "c8f4de192a934780801427085846ca5f";
   }
 
   static const char* value(const ::rrt_implement::trajectory_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xea0b13cc66128587ULL;
-  static const uint64_t static_value2 = 0x5c8beb2b9c2f22c6ULL;
+  static const uint64_t static_value1 = 0xc8f4de192a934780ULL;
+  static const uint64_t static_value2 = 0x801427085846ca5fULL;
 };
 
 template<class ContainerAllocator>
@@ -145,7 +145,7 @@ struct Definition< ::rrt_implement::trajectory_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "position point3d\n\
+    return "position[] points\n\
 ellipsoid model\n\
 ================================================================================\n\
 MSG: rrt_implement/position\n\
@@ -177,7 +177,7 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.point3d);
+      stream.next(m.points);
       stream.next(m.model);
     }
 
@@ -197,9 +197,14 @@ struct Printer< ::rrt_implement::trajectory_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::rrt_implement::trajectory_<ContainerAllocator>& v)
   {
-    s << indent << "point3d: ";
-    s << std::endl;
-    Printer< ::rrt_implement::position_<ContainerAllocator> >::stream(s, indent + "  ", v.point3d);
+    s << indent << "points[]" << std::endl;
+    for (size_t i = 0; i < v.points.size(); ++i)
+    {
+      s << indent << "  points[" << i << "]: ";
+      s << std::endl;
+      s << indent;
+      Printer< ::rrt_implement::position_<ContainerAllocator> >::stream(s, indent + "    ", v.points[i]);
+    }
     s << indent << "model: ";
     s << std::endl;
     Printer< ::rrt_implement::ellipsoid_<ContainerAllocator> >::stream(s, indent + "  ", v.model);

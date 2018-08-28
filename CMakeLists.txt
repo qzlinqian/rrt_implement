@@ -59,8 +59,8 @@ add_message_files (
   FILES
   position.msg
   ellipsoid.msg
-#  trajectory.msg
-#  world.msg
+  trajectory.msg
+  world.msg
 )
 
 # Generate services in the 'srv' folder
@@ -136,13 +136,14 @@ add_library(rrt_implement
 )
 
 
-#add_executable(rrtPlanner src/planner.cpp)
-#add_dependencies(rrtPlanner rrt_implement)
-#target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
+add_executable(rrtPlanner src/planner.cpp)
+add_dependencies(rrtPlanner rrt_implement)
+target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
 
-add_executable(sceneDisp src/scene.cpp)
-add_dependencies(sceneDisp rrt_implement)
-target_link_libraries(sceneDisp rrt_implement ${catkin_LIBRARIES})
+
+add_executable(scene src/scene.cpp)
+add_dependencies(scene rrt_implement)
+target_link_libraries(scene rrt_implement ${catkin_LIBRARIES})
 
 
 ## Add cmake target dependencies of the library

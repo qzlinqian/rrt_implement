@@ -43,6 +43,7 @@ namespace rrt{
     void insert(double xx, double yy, double ph, IDNumber IntendedFather=-1); //have father value passed: know the father
     void insert(const Position &pos, IDNumber IntendedFather=-1);
     rrtNode remove(IDNumber ToBeRemoved);
+    rrtNode pop();
     std::vector<rrt::rrtNode>& getTree();
     rrtNode& getNode(IDNumber ID);
     int getTreeSize();

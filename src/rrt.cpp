@@ -10,13 +10,13 @@
 // 10 * 10 * 180(mod 180)
 const double rrt::xRange = 10.0,
     rrt::yRange = 10.0,
-    rrt::phiRange = 180.0; //the angle is stored in degree
+    rrt::phiRange = 360.0; //the angle is stored in degree
 
 const double rrt::xMetric = 0.1, //Metric of x
     rrt::yMetric = 0.1, //Metric of y
-    rrt::phiMetric = 1.8; //Metric of angle
+    rrt::phiMetric = phiRange/xRange*xMetric; //Metric of angle
 
-const double rrt::MaxRange = xRange/xMetric + yRange/yMetric + phiRange/phiMetric;
+const double rrt::MaxRange = 2*(xRange/xMetric + yRange/yMetric + phiRange/phiMetric);
 
 
 //Position
@@ -56,6 +56,8 @@ rrt::rrtNode::rrtNode(rrt::rrtNode const &p) {
 //    root = nullptr;
 //}
 
+std::vector<rrt::rrtNode> rrt::RRTree::rrtTree;
+
 rrt::RRTree::RRTree(double originX, double originY, double originPhi) {
   rrtNode temp(originX, originY, originPhi, 0);
   temp.NodeID = int(rrtTree.size());
@@ -89,6 +91,14 @@ rrt::rrtNode rrt::RRTree::remove(IDNumber ToBeRemoved) {
   return temp;
 }
 
+rrt::rrtNode rrt::RRTree::pop() {
+  rrtNode temp = rrtTree.back();
+  //father wasn't copied by the copy constructor, so temp.father = -1
+  rrtTree[rrtTree.back().father].children.pop_back(); //remove father's child
+  rrtTree.pop_back();
+  return temp;
+}
+
 std::vector<rrt::rrtNode>& rrt::RRTree::getTree() {
   return rrtTree;
 }
@@ -99,9 +109,11 @@ rrt::rrtNode& rrt::RRTree::getNode(IDNumber ID) {  //avoid copy constructor
 
 double rrt::getEuclideanDistance(rrt::rrtNode const &Point1, rrt::Position const &Point2) {
   //avoid copy constructor
+  double a = Point1.phi-Point2.phi;
+  if (std::abs(a) > std::abs(360-a)) a = 360-a;
   return std::abs((Point1.x-Point2.x)/xMetric)
          +std::abs((Point1.y-Point2.y)/yMetric)
-         +std::abs((Point1.phi-Point2.phi)/phiMetric);
+         +std::abs(a/phiMetric);
 }
 
 int rrt::RRTree::getTreeSize() {

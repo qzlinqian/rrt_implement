@@ -5,9 +5,13 @@
 #ifndef PROJECT_PLANNER_H
 #define PROJECT_PLANNER_H
 
+#include <string>
 #include <rrt_implement/rrt.h>
+#include <moveit/planning_scene/planning_scene.h>
 
 #define NEAR_TO_GOAL 0.0001
+static std::string PLANNING_GROUP = "base";
+#define MaxSearchTimes 1000
 
 namespace rrt{
   class PlanningAct{
@@ -34,7 +38,7 @@ namespace rrt{
   };
 
   Position generateRandomPos();
-  bool collisionChecking(rrtNode &Point1, Position &Point2);
+  bool collisionChecking(rrtNode &Point1,/* Position &Point2, */planning_scene::PlanningScenePtr &planning_scene);
 
 
 }

@@ -10,14 +10,15 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   message_generation
-  nav_msgs
+#  nav_msgs
   roscpp
   rospy
   std_msgs
   tf
   visualization_msgs
   moveit_core
-  eigen_conversions
+  moveit_msgs
+  moveit_ros_planning_interface
 )
 
 ## System dependencies are found with CMake's conventions
@@ -53,12 +54,12 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+# Generate messages in the 'msg' folder
+add_message_files (
+  FILES
+  position.msg
+  trajectory.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -74,11 +75,11 @@ find_package(catkin REQUIRED COMPONENTS
 #   Action2.action
 # )
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   nav_msgs#   std_msgs#   visualization_msgs
-# )
+# Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs   std_msgs   visualization_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -112,8 +113,8 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rrt_implement
-  CATKIN_DEPENDS geometry_msgs message_generation nav_msgs roscpp rospy std_msgs tf visualization_msgs
-  DEPENDS system_lib
+  CATKIN_DEPENDS geometry_msgs message_generation nav_msgs roscpp rospy std_msgs tf visualization_msgs moveit_core moveit_msgs message_runtime
+#  DEPENDS system_lib
 )
 
 ###########

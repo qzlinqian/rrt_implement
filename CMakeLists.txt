@@ -61,14 +61,16 @@ add_message_files (
   ellipsoid.msg
   trajectory.msg
   world.msg
+  point.msg
+  pointsArray.msg
 )
 
 # Generate services in the 'srv' folder
-#add_service_files(
-#  FILES
-#  ellipsoid_points_gen.srv
+add_service_files(
+  FILES
+  ellipsoid_points.srv
 #   Service2.srv
-#)
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -141,9 +143,9 @@ add_dependencies(rrtPlanner rrt_implement)
 target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
 
 
-add_executable(scene src/scene.cpp)
-add_dependencies(scene rrt_implement)
-target_link_libraries(scene rrt_implement ${catkin_LIBRARIES})
+add_executable(environment_pub src/environment_publisher.cpp)
+add_dependencies(environment_pub rrt_implement)
+target_link_libraries(environment_pub rrt_implement ${catkin_LIBRARIES})
 
 
 ## Add cmake target dependencies of the library

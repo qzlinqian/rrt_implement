@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from collision_rospy.srv import *
-from collision_rospy.msg import ellipsoid
-from collision_rospy.msg import point2d
+from rrt_implement.srv import *
+from rrt_implement.msg import ellipsoid
+from rrt_implement.msg import point
 import rospy
 import numpy as np
 import random as rn
@@ -42,7 +42,7 @@ class ellipsoid_gen:
           x_aux, y_aux = self.rotation(aux[0], aux[1], req.ellipsoid.angle)
           #rotated_x.append(x_aux)
           #rotated_y.append(y_aux)
-          point_aux = point2d(x = x_aux + req.ellipsoid.center[0], y=y_aux + req.ellipsoid.center[1])
+          point_aux = point(x = x_aux + req.ellipsoid.center[0], y=y_aux + req.ellipsoid.center[1])
           points.append(point_aux)
           #Return points with rotation with translation           
         return ellipsoid_pointsResponse(points = points)

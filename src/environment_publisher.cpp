@@ -30,7 +30,7 @@ private:
   ros::ServiceClient point_gen_client;
 
   std::vector<rrt_implement::ellipsoid> object_ellipsoids;
-  int object_size;
+  int object_size{};
   rrt_implement::ellipsoid arena_ellipsoid;
   rrt_implement::ellipsoid robot_ellipsoid;
 
@@ -51,13 +51,14 @@ public:
   void getPoints();
 
   void plotPoints(rrt_implement::pointsArray object,
-                  ros::Publisher publisher, double r, double g, double b);
+                  const ros::Publisher &publisher, double r, double g, double b);
 };
+
 
 Environment_publisher::Environment_publisher(ros::NodeHandle &nh) {
   nh_ = nh;
 
-  environment_info_sub = nh_.subscribe("/world_info", 1000,
+  environment_info_sub = nh_.subscribe("world_info", 1000,
       &Environment_publisher::publish_world_info, this);
 
   marker_robot_pub_ = nh_.advertise<visualization_msgs::Marker>("robot", 1);
@@ -70,8 +71,20 @@ Environment_publisher::Environment_publisher(ros::NodeHandle &nh) {
     marker_obs_pubs_[i] = nh_.advertise<visualization_msgs::Marker>("obstacle"+os.str(),1);
   }
 
-  point_gen_client = nh.serviceClient<rrt_implement::ellipsoid_points>("ellipsoid_point_gen_server");
+  point_gen_client = nh.serviceClient<rrt_implement::ellipsoid_points>("ellipsoid_points_gen");
 }
+
+
+void Environment_publisher::publish_world_info(const rrt_implement::world::ConstPtr &msg) {
+  //pass the information in msg
+  object_ellipsoids = msg->obstacles;
+  object_size = static_cast<int>(msg->obstacle_size);
+  arena_ellipsoid = msg->arena;
+  robot_ellipsoid = msg->robot;
+  getPoints();
+  plot();
+}
+
 
 void Environment_publisher::getPoints() {
   //from collision objects
@@ -114,7 +127,7 @@ void Environment_publisher::getPoints() {
   }
 }
 
-void Environment_publisher::plotPoints(rrt_implement::pointsArray object, ros::Publisher publisher,
+void Environment_publisher::plotPoints(rrt_implement::pointsArray object, const ros::Publisher &publisher,
                                        double r, double g, double b) {
   visualization_msgs::Marker marker_points;
   visualization_msgs::Marker marker_lines;
@@ -156,6 +169,8 @@ void Environment_publisher::plotPoints(rrt_implement::pointsArray object, ros::P
   marker_points.header.stamp = ros::Time::now();
   marker_points.lifetime = ros::Duration();
 
+  //add the first point to the end -> form a circle
+  points_.push_back(points_[0]);
   marker_lines.points = points_;
   marker_lines.header.stamp = ros::Time::now();
   marker_lines.lifetime = ros::Duration();
@@ -184,16 +199,6 @@ void Environment_publisher::plot() {
   }
 }
 
-
-void Environment_publisher::publish_world_info(const rrt_implement::world::ConstPtr &msg) {
-  //pass the information in msg
-  object_ellipsoids = msg->obstacles;
-  object_size = static_cast<int>(msg->obstacle_size);
-  arena_ellipsoid = msg->arena;
-  robot_ellipsoid = msg->robot;
-  getPoints();
-  plot();
-}
 
 
 int main(int argc, char **argv){

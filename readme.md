@@ -22,7 +22,7 @@
 
 #### package construct
 ##### msg
-* ellipsoid: define the ellipsoid with a center point, an angle and the length of the axies
+* ellipsoid: define the ellipsoid with a center point, an angle and the length of the axises
 * point: 2D point
 * position: define the pose of a certain ellipsoid (robot) pose with a center point and an angle
 * trajectory: a position array + a model

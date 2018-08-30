@@ -148,6 +148,20 @@ add_dependencies(environment_pub rrt_implement)
 target_link_libraries(environment_pub rrt_implement ${catkin_LIBRARIES})
 
 
+add_executable(trajectory_pub src/trajectory_publisher.cpp)
+add_dependencies(trajectory_pub rrt_implement)
+target_link_libraries(trajectory_pub rrt_implement ${catkin_LIBRARIES})
+
+
+add_executable(ellipsoid_point_gen_srv src/ellipsoid_point_gen.cpp)
+add_dependencies(ellipsoid_point_gen_srv rrt_implement)
+target_link_libraries(ellipsoid_point_gen_srv rrt_implement ${catkin_LIBRARIES})
+
+#add_executable(ellipsoid_point_gen_cli src/ellipsoid_point_gen_client_test.cpp)
+#add_dependencies(ellipsoid_point_gen_cli rrt_implement)
+#target_link_libraries(ellipsoid_point_gen_cli rrt_implement ${catkin_LIBRARIES})
+
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure

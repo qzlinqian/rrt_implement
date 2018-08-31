@@ -13,11 +13,11 @@
 #include <rrt_implement/ellipsoid_points.h>
 
 
-rrt_implement::point rotation(double x_, double y_, double angle_) {
-  rrt_implement::point newPoint;
-  newPoint.x = x_*std::cos(angle_) + y_*std::sin(angle_);
-  newPoint.y = y_*std::cos(angle_) - x_*std::sin(angle_);
-  return newPoint;
+/*rrt_implement::point*/ void rotation(double x_, double y_, double angle_, double* newPoint) {
+//  rrt_implement::point newPoint;
+  newPoint[0] = x_*std::cos(angle_) + y_*std::sin(angle_);
+  newPoint[1] = y_*std::cos(angle_) - x_*std::sin(angle_);
+//  return newPoint;
 }
 
 
@@ -38,7 +38,10 @@ bool handle_ellipsoid_points_gen(
     double x = semi_axes[0] * std::cos(i * pi_step);
     double y = semi_axes[1] * std::sin(i * pi_step);
 
-    res.points[i] = rotation(x,y,angle);
+    double temp[2];
+    rotation(x,y,angle,temp);
+    res.points[i].x = center[0] + temp[0];
+    res.points[i].y = center[1] + temp[1];
 //    std::cout<<i<<std::endl;
   }
 

@@ -22,7 +22,7 @@ namespace rrt{
     double y;
     double phi;
     int father;
-    std::vector<IDNumber> children;
+//    std::vector<IDNumber> children;
 
     rrtNode(double xx=0, double yy=0, double ph=0, int ff=-1);
     rrtNode(rrtNode const &p);
@@ -31,7 +31,7 @@ namespace rrt{
   class RRTree{
 //  private:
   public:
-    static std::vector<rrtNode> rrtTree;
+    /*static*/ std::vector<rrtNode> rrtTree;
 //  public:
 //        rrtNode* root;
 

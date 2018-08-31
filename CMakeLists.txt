@@ -146,7 +146,13 @@ target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
 add_executable(environment_pub src/environment_publisher.cpp)
 add_dependencies(environment_pub rrt_implement)
 target_link_libraries(environment_pub rrt_implement ${catkin_LIBRARIES})
+#add_executable(environment_pub2 src/environment_publisher2.cpp)
+#add_dependencies(environment_pub2 rrt_implement)
+#target_link_libraries(environment_pub2 rrt_implement ${catkin_LIBRARIES})
 
+#add_executable(env_pub_test src/env_pub_test.cpp)
+#add_dependencies(env_pub_test rrt_implement)
+#target_link_libraries(env_pub_test rrt_implement ${catkin_LIBRARIES})
 
 add_executable(trajectory_pub src/trajectory_publisher.cpp)
 add_dependencies(trajectory_pub rrt_implement)

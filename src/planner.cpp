@@ -7,7 +7,9 @@
 #include <cstdlib>
 #include <ros/ros.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
+#include <string>
 #include <random>
 #include <rrt_implement/rrt.h>
 #include <rrt_implement/planner.h>
@@ -49,7 +51,7 @@ void rrt::setEnvironment(){
   robot_start.center.resize(2);
   robot_start.center[0]=-3.0;
   robot_start.center[1]=2.0;
-  robot_start.angle=3.1416/2;
+  robot_start.angle=PI/2;
   robot_start.epsilon=2.0;
 
   arena.semi_axes.resize(2);
@@ -80,7 +82,7 @@ void rrt::setEnvironment(){
   obs1.semi_axes[0] = 2.0;
   obs1.semi_axes[1] = 1.0;
   obs1.semi_axes[2] = 0.0;
-  obs1.angle = 3.1416/4;
+  obs1.angle = PI/4;
   obs1.epsilon = 2.0;
   obs1.center.resize(3);
   obs1.center[0] = 0.0;
@@ -92,7 +94,7 @@ void rrt::setEnvironment(){
   obs2.semi_axes[0] = 3.0;
   obs2.semi_axes[1] = 2.0;
   obs2.semi_axes[2] = 0.0;
-  obs2.angle = 3.1416/8;
+  obs2.angle = PI/8;
   obs2.epsilon = 2.0;
   obs2.center.resize(3);
   obs2.center[0] = -3.0;
@@ -106,7 +108,7 @@ void rrt::setEnvironment(){
 
 //need to complete
 bool rrt::collisionChecking(rrt_implement::ellipsoid* robot_) {
-  return true;
+  return false;
 }
 
 bool rrt::isStateValid(const Position new_position) {
@@ -124,11 +126,11 @@ bool rrt::isStateValid(const Position new_position) {
 
   bool valid = false;
   bool res = collisionChecking(&robot);
-  if(res == false){
+  if(!res){
     valid = true;
   }
-  std::cout <<"x: "<<x<<" y: "<< y<< " angle: "<< yaw<< std::endl;
-  std::cout <<"Valid: "<< res<< std::endl;
+//  std::cout <<"x: "<<x<<" y: "<< y<< " angle: "<< yaw<< std::endl;
+//  std::cout <<"Valid: "<< res<< std::endl;
   return valid;
 }
 
@@ -157,59 +159,68 @@ bool PlanningAct::planningWithRRT(){
 //  bool planned = false;
 
   int searchTimes = 0;
+//  int treeSize = 1;
   bool ends = false;  // or = goalIsAchieved(); in case goal==start?
   while (searchTimes < MaxSearchTimes && !ends) {
     IDNumber nearestNodeID = -1;
     Position randomPos = generateRandomPos();
-    std::cout << "random node: x:" << randomPos.x << " y:" << randomPos.y << " phi:" << randomPos.phi << std::endl;
+//    std::cout << "random node: x:" << randomPos.x << " y:" << randomPos.y << " phi:" << randomPos.phi << std::endl;
 
     double MinDistance = MaxRange, presentDistance;
-    for (int i = 0; i < this->RRT_Tree.getTreeSize(); i++) {
-      presentDistance = getEuclideanDistance(rrt::RRTree::rrtTree[i], randomPos);
+    for (int i = 0; i < this->RRT_Tree.rrtTree.size(); i++) {
+      presentDistance = getEuclideanDistance(RRT_Tree.rrtTree[i], randomPos);
       if (presentDistance < MinDistance) { //no action when "=" --lazy
         MinDistance = presentDistance;
         nearestNodeID = i;
+//        std::cout<<" searched: "<<i;
       }
     }
     //nearestNodeID is the nearest Node to the random position in the tree
 //  return nearestNodeID;
-    std::cout << "q_near:" << nearestNodeID << std::endl;
+//    std::cout << "q_near:" << nearestNodeID <<" dis"<<MinDistance<<" total:"<<RRT_Tree.rrtTree.size()<< std::endl;
     if (nearestNodeID > -1) { //find a new point from the nearest node towards the random position
-      std::cout << "0 ";
       Position newPos;
-      std::cout << "1 ";
-      rrtNode nearestNode = rrt::RRTree::rrtTree[nearestNodeID];
-      std::cout << "2 ";
+//      std::cout<<" newPos";
+      rrtNode nearestNode = RRT_Tree.rrtTree[nearestNodeID];
+//      std::cout<<" visit nearestNode";
       newPos.x = nearestNode.x + (randomPos.x - nearestNode.x) / MinDistance * xMetric;
       newPos.y = nearestNode.y + (randomPos.y - nearestNode.y) / MinDistance * yMetric;
       newPos.phi = nearestNode.phi + (randomPos.phi - nearestNode.phi) / MinDistance * phiMetric;
 //    return newPos;
       if (isStateValid(newPos)) {  //can go through
-        std::cout << "3 ";
-        RRT_Tree.insert(newPos);
-        std::cout << "4 ";
+//        std::cout<<" valid";
+        RRT_Tree.insert(newPos, nearestNodeID);
+//        std::cout<<" insert";
 //      addedNewNode = true;
         ends = goalIsAchieved();
+//        std::cout<<" achieved "<<ends<<"\n";
+//        treeSize++;
       }
     }
     searchTimes++;
+    if (searchTimes % 500 == 0) std::cout<<"Have searched for "<<searchTimes<<" times.\n";
   }
 
+  std::cout<<"search ends\n";
+//  RRT_Tree.rrtTree.resize(treeSize);
+
   if (ends){ //find trajectory
-    unsigned long size = 0;  //trajectory tree size
-    rrtNode tempNode = rrt::RRTree::rrtTree.back();
+    rrtNode tempNode = RRT_Tree.rrtTree.back();
     int father = tempNode.father;
 
-    while (father != -1){
-      trajectory_[size].x = tempNode.x;
-      trajectory_[size].y = tempNode.y;
-      trajectory_[size].phi = tempNode.phi;
-      size++;
-      tempNode = rrt::RRTree::rrtTree[father];
-      father = tempNode.father;
-    }
+    rrt_implement::position temp_traj;
 
-    trajectory_.resize(size);
+    while (father > -1){
+      temp_traj.x = tempNode.x;
+      temp_traj.y = tempNode.y;
+      temp_traj.phi = tempNode.phi /180 * PI;
+      trajectory_.push_back(temp_traj); //reverse order!!!
+      tempNode = RRT_Tree.rrtTree[father];
+      father = tempNode.father;
+//      std::cout<<" "<<father;
+    }
+    std::cout<<"Planning succeed and start to plot trajectory.\n";
+//    trajectory_.resize(size);
   }
   else
     std::cout<<"Planning Failed"<<std::endl;
@@ -224,7 +235,7 @@ bool PlanningAct::planningWithRRT(){
 //void PlanningAct::stepAMetricForward(rrtNode &nearestNode, Position &randomPos)
 
 bool PlanningAct::goalIsAchieved() {
-  return (getEuclideanDistance(rrt::RRTree::rrtTree.back(), goalPos) < NEAR_TO_GOAL);
+  return (getEuclideanDistance(RRT_Tree.rrtTree.back(), goalPos) < NEAR_TO_GOAL);
 }
 
 
@@ -238,8 +249,8 @@ int main(int argc, char **argv) {
   spinner.start();
   sleep(10);
 
-  world_pub = node_handle.advertise<rrt_implement::world>("world_info", 1);
-  trajectory_pub = node_handle.advertise<rrt_implement::position>("trajectory_info",1);
+  world_pub = node_handle.advertise<rrt_implement::world>("world_info", 1000);
+  trajectory_pub = node_handle.advertise<rrt_implement::trajectory>("trajectory_info",1000);
 
 //  client = node_handle.serviceClient<rrt_implement::collisionCheck>("collision_check_server");
   //world init & config
@@ -256,10 +267,13 @@ int main(int argc, char **argv) {
     sleep(5);
   }
   world_pub.publish(world_msg);
+  ROS_INFO("world_info published");
+
+  double temp_phi = robot_start.angle /PI * 180;
 
 
   //init planner
-  Position start_position(robot_start.center[0], robot_start.center[1], robot_start.angle), goal_position(3,3,0);
+  Position start_position(robot_start.center[0], robot_start.center[1], temp_phi), goal_position(3,3,0);
   PlanningAct planner(start_position, goal_position);
 
   bool planning_succeed = planner.planningWithRRT();
@@ -267,11 +281,12 @@ int main(int argc, char **argv) {
   if (planning_succeed){
     rrt_implement::trajectory trajectory_msg;
     trajectory_msg.points = trajectory_;
+    std::cout<<trajectory_.size()<<std::endl;
     trajectory_msg.model = robot_start;
 
     //trajectory publish
     while (trajectory_pub.getNumSubscribers() < 1){
-      ROS_WARN_ONCE("Please create a subscriber for the world_info");
+      ROS_WARN_ONCE("Please create a subscriber for the trajectory_info");
       sleep(1);
     }
     trajectory_pub.publish(trajectory_msg);

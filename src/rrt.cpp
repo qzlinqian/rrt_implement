@@ -12,11 +12,11 @@ const double rrt::xRange = 10.0,
     rrt::yRange = 10.0,
     rrt::phiRange = 360.0; //the angle is stored in degree
 
-const double rrt::xMetric = 0.1, //Metric of x
-    rrt::yMetric = 0.1, //Metric of y
+const double rrt::xMetric = 1, //Metric of x
+    rrt::yMetric = 1, //Metric of y
     rrt::phiMetric = phiRange/xRange*xMetric; //Metric of angle
 
-const double rrt::MaxRange = 2*(xRange/xMetric + yRange/yMetric + phiRange/phiMetric);
+const double rrt::MaxRange = xRange/xMetric + yRange/yMetric + phiRange/phiMetric;
 
 
 //Position
@@ -56,17 +56,17 @@ rrt::rrtNode::rrtNode(rrt::rrtNode const &p) {
 //    root = nullptr;
 //}
 
-std::vector<rrt::rrtNode> rrt::RRTree::rrtTree;
+//std::vector<rrt::rrtNode> rrt::RRTree::rrtTree;
 
 rrt::RRTree::RRTree(double originX, double originY, double originPhi) {
-  rrtNode temp(originX, originY, originPhi, 0);
+  rrtNode temp(originX, originY, originPhi, -1);
   temp.NodeID = int(rrtTree.size());
   rrtTree.push_back(temp);
 //    root = &rrtTree.front();
 }
 
 rrt::RRTree::RRTree(rrt::Position const &originPos) {
-  rrtNode temp(originPos.x, originPos.y, originPos.phi, 0);
+  rrtNode temp(originPos.x, originPos.y, originPos.phi, -1);
   temp.NodeID = int(rrtTree.size());
   rrtTree.push_back(temp);
 }
@@ -75,14 +75,15 @@ void rrt::RRTree::insert(double xx, double yy, double ph, IDNumber IntendedFathe
   rrt::rrtNode temp(xx, yy, ph,IntendedFather);
   temp.NodeID = int(rrtTree.size());
   rrtTree.push_back(temp);
-  rrtTree[IntendedFather].children.push_back(temp.NodeID);
+//  rrtTree[IntendedFather].children.push_back(temp.NodeID);
 }
 
 void rrt::RRTree::insert(rrt::Position const &pos, rrt::IDNumber IntendedFather) {
-  rrt::rrtNode temp(pos.x, pos.y, pos.phi);
+  rrt::rrtNode temp(pos.x, pos.y, pos.phi,IntendedFather);
   temp.NodeID = int(rrtTree.size());
+//  temp.father = IntendedFather;
   rrtTree.push_back(temp);
-  rrtTree[IntendedFather].children.push_back(temp.NodeID);
+//  rrtTree[IntendedFather].children.push_back(temp.NodeID);
 }
 
 rrt::rrtNode rrt::RRTree::remove(IDNumber ToBeRemoved) {
@@ -94,7 +95,7 @@ rrt::rrtNode rrt::RRTree::remove(IDNumber ToBeRemoved) {
 rrt::rrtNode rrt::RRTree::pop() {
   rrtNode temp = rrtTree.back();
   //father wasn't copied by the copy constructor, so temp.father = -1
-  rrtTree[rrtTree.back().father].children.pop_back(); //remove father's child
+//  rrtTree[rrtTree.back().father].children.pop_back(); //remove father's child
   rrtTree.pop_back();
   return temp;
 }

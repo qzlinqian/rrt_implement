@@ -14,9 +14,13 @@
 #include <rrt_implement/ellipsoid.h>
 #include <rrt_implement/world.h>
 
-#define NEAR_TO_GOAL 0.0001
+#define PI 3.1416
+
+#define NEAR_TO_GOAL 2
+
 static std::string PLANNING_GROUP = "base";
-#define MaxSearchTimes 1000
+
+#define MaxSearchTimes 6000
 
 namespace rrt{
   class PlanningAct{

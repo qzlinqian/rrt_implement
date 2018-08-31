@@ -17,7 +17,8 @@
 - [ ] graph -- too much to display
 
 ##### final work
-- [ ] visualize in rviz
+- [x] visualize in rviz 
+* world should only plot once
 - [x] trajectory
 
 #### package construct

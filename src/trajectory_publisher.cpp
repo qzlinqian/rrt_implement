@@ -77,6 +77,7 @@ Trajectory_publisher::Trajectory_publisher(ros::NodeHandle &nh) {
 
 
 void Trajectory_publisher::publish_trajectory_info(const rrt_implement::trajectory::ConstPtr &msg) {
+  std::cout<<"Msg received.\n"<<"size: "<<msg->points.size();
   trajectory_objects_.resize(msg->points.size());
 
   robot_model = msg->model;
@@ -109,9 +110,8 @@ void Trajectory_publisher::publish_trajectory_info(const rrt_implement::trajecto
 
 void Trajectory_publisher::plot() {
   while (ros::ok()){
-    for(std::vector<rrt_implement::pointsArray>::const_iterator j=trajectory_objects_.begin();
-        j != trajectory_objects_.end(); j++){
-      rrt_implement::pointsArray obj_temp = *j;
+    for(int j = trajectory_objects_.size(); j>0; j--){
+      rrt_implement::pointsArray obj_temp = trajectory_objects_[j-1];
 
       std::vector<geometry_msgs::Point> points_;
       points_.resize(obj_temp.points.size());
@@ -131,7 +131,13 @@ void Trajectory_publisher::plot() {
       marker_lines.header.stamp = ros::Time::now();
       marker_lines.lifetime = ros::Duration();
 
+      while (marker_pub_.getNumSubscribers() < 1){
+        ROS_WARN_ONCE("Please create a subscriber to the marker");
+        sleep(1);
+      }
+
       marker_pub_.publish(marker_lines);
+      std::cout<<"Plot trajectory.\n";
       sleep(2);
     }
     ros::spinOnce();

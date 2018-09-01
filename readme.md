@@ -25,7 +25,7 @@
 * trajectory
 
 #### running note
-after 'catkin_make' && 'source devel/setup.bash'
+after `catkin_make` && `source devel/setup.bash`
 * run the server 
 ```
 rosrun rrt_implement ellipsoid_point_gen_srv

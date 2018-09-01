@@ -26,13 +26,11 @@ struct ellipsoid_
   ellipsoid_()
     : semi_axes()
     , center()
-    , epsilon(0.0)
     , angle(0.0)  {
     }
   ellipsoid_(const ContainerAllocator& _alloc)
     : semi_axes(_alloc)
     , center(_alloc)
-    , epsilon(0.0)
     , angle(0.0)  {
   (void)_alloc;
     }
@@ -44,9 +42,6 @@ struct ellipsoid_
 
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _center_type;
   _center_type center;
-
-   typedef double _epsilon_type;
-  _epsilon_type epsilon;
 
    typedef double _angle_type;
   _angle_type angle;
@@ -129,12 +124,12 @@ struct MD5Sum< ::rrt_implement::ellipsoid_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "430a0a15ec989ee778cfad0bf53a39f3";
+    return "0a7437d60f63265e91ca861c1b8644eb";
   }
 
   static const char* value(const ::rrt_implement::ellipsoid_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x430a0a15ec989ee7ULL;
-  static const uint64_t static_value2 = 0x78cfad0bf53a39f3ULL;
+  static const uint64_t static_value1 = 0x0a7437d60f63265eULL;
+  static const uint64_t static_value2 = 0x91ca861c1b8644ebULL;
 };
 
 template<class ContainerAllocator>
@@ -155,7 +150,7 @@ struct Definition< ::rrt_implement::ellipsoid_<ContainerAllocator> >
   {
     return "float64[] semi_axes\n\
 float64[] center\n\
-float64 epsilon\n\
+#float64 epsilon\n\
 float64 angle\n\
 ";
   }
@@ -177,7 +172,6 @@ namespace serialization
     {
       stream.next(m.semi_axes);
       stream.next(m.center);
-      stream.next(m.epsilon);
       stream.next(m.angle);
     }
 
@@ -209,8 +203,6 @@ struct Printer< ::rrt_implement::ellipsoid_<ContainerAllocator> >
       s << indent << "  center[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.center[i]);
     }
-    s << indent << "epsilon: ";
-    Printer<double>::stream(s, indent + "  ", v.epsilon);
     s << indent << "angle: ";
     Printer<double>::stream(s, indent + "  ", v.angle);
   }

@@ -1,0 +1,4 @@
+world environment
+position current_position
+---
+bool collision

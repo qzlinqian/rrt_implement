@@ -132,7 +132,7 @@ void Environment_publisher::getPoints() {
 
 
 void Environment_publisher::plot() {
-  while (ros::ok()){
+  /*while*/ if (ros::ok()){ //should not use "while" here, or the world will plot again and again
     plotPoints(robot_points, marker_robot_pub_,0.0,1.0,0.0);  //robot: green
     sleep(1);
     plotPoints(arena_points, marker_arena_pub_,1.0,0.0,0.0);  //arena: red

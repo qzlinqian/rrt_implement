@@ -15,12 +15,13 @@
 #include <rrt_implement/world.h>
 
 #define PI 3.1416
+#define Degree2Radian PI/180;
 
 #define NEAR_TO_GOAL 2
 
 static std::string PLANNING_GROUP = "base";
 
-#define MaxSearchTimes 6000
+#define MaxSearchTimes 100000
 
 namespace rrt{
   class PlanningAct{
@@ -49,9 +50,9 @@ namespace rrt{
 
   Position generateRandomPos();
 //  bool collisionChecking(rrtNode &Point1,/* Position &Point2, */planning_scene::PlanningScenePtr &planning_scene);
-  bool collisionChecking(rrt_implement::ellipsoid* robot);
+//  bool collisionChecking(rrt_implement::ellipsoid* robot);
 
-  bool isStateValid(const Position new_position);
+  bool isStateValid(const Position& new_position);
 
   void setEnvironment();
 
@@ -61,6 +62,7 @@ namespace rrt{
   std::vector<rrt_implement::ellipsoid> obstacles;
   rrt_implement::ellipsoid arena;
   rrt_implement::ellipsoid arena_collision;
+  rrt_implement::world world_msg;
 
   std::vector<rrt_implement::position> trajectory_;
 

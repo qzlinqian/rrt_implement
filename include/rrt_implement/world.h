@@ -132,12 +132,12 @@ struct MD5Sum< ::rrt_implement::world_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "7a3d9b4c4eef5be7211ac744e599a2a7";
+    return "28b640a477bfc11be32ff44f07a3694d";
   }
 
   static const char* value(const ::rrt_implement::world_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x7a3d9b4c4eef5be7ULL;
-  static const uint64_t static_value2 = 0x211ac744e599a2a7ULL;
+  static const uint64_t static_value1 = 0x28b640a477bfc11bULL;
+  static const uint64_t static_value2 = 0xe32ff44f07a3694dULL;
 };
 
 template<class ContainerAllocator>
@@ -165,7 +165,7 @@ ellipsoid robot\n\
 MSG: rrt_implement/ellipsoid\n\
 float64[] semi_axes\n\
 float64[] center\n\
-float64 epsilon\n\
+#float64 epsilon\n\
 float64 angle\n\
 ";
   }

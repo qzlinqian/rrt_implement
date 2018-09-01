@@ -18,7 +18,6 @@
 
 ##### final work
 - [x] visualize in rviz 
-* world should only plot once
 - [x] trajectory
 
 #### package construct

@@ -10,11 +10,12 @@
 // 10 * 10 * 180(mod 180)
 const double rrt::xRange = 10.0,
     rrt::yRange = 10.0,
-    rrt::phiRange = 360.0; //the angle is stored in degree
+    rrt::phiRange = 180.0; //the angle is stored in degree
 
-const double rrt::xMetric = 1, //Metric of x
-    rrt::yMetric = 1, //Metric of y
+const double rrt::xMetric = 0.8, //Metric of x
+    rrt::yMetric =0.81, //Metric of y
     rrt::phiMetric = phiRange/xRange*xMetric; //Metric of angle
+//    rrt::phiMetric = 10;
 
 const double rrt::MaxRange = xRange/xMetric + yRange/yMetric + phiRange/phiMetric;
 
@@ -111,7 +112,7 @@ std::vector<rrt::rrtNode>& rrt::RRTree::getTree() {
 double rrt::getEuclideanDistance(rrt::rrtNode const &Point1, rrt::Position const &Point2) {
   //avoid copy constructor
   double a = Point1.phi-Point2.phi;
-  if (std::abs(a) > std::abs(360-a)) a = 360-a;
+  if (std::abs(a) > std::abs(phiRange-a)) a = phiRange-a;
   return std::abs((Point1.x-Point2.x)/xMetric)
          +std::abs((Point1.y-Point2.y)/yMetric)
          +std::abs(a/phiMetric);

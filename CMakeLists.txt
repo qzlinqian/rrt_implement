@@ -69,7 +69,7 @@ add_message_files (
 add_service_files(
   FILES
   ellipsoid_points.srv
-#   Service2.srv
+  collision_detection.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -163,6 +163,14 @@ add_executable(ellipsoid_point_gen_srv src/ellipsoid_point_gen.cpp)
 add_dependencies(ellipsoid_point_gen_srv rrt_implement)
 target_link_libraries(ellipsoid_point_gen_srv rrt_implement ${catkin_LIBRARIES})
 
+
+add_executable(collision_detection_srv src/collision_detect.cpp)
+add_dependencies(collision_detection_srv rrt_implement)
+target_link_libraries(collision_detection_srv rrt_implement ${catkin_LIBRARIES})
+
+#add_executable(collision_detection_cli src/collision_detect_test.cpp)
+#add_dependencies(collision_detection_cli rrt_implement)
+#target_link_libraries(collision_detection_cli rrt_implement ${catkin_LIBRARIES})
 #add_executable(ellipsoid_point_gen_cli src/ellipsoid_point_gen_client_test.cpp)
 #add_dependencies(ellipsoid_point_gen_cli rrt_implement)
 #target_link_libraries(ellipsoid_point_gen_cli rrt_implement ${catkin_LIBRARIES})

@@ -44,7 +44,11 @@ namespace rrt{
     double inter_angle = std::atan( deltaY / deltaX );
     double robot_radius = ellipsoidRadius(robot.semi_axes[0], robot.semi_axes[1], robot.angle+inter_angle);
     double object_radius = ellipsoidRadius(object.semi_axes[0], object.semi_axes[1], object.angle+inter_angle);
+<<<<<<< HEAD
     return ((std::abs(deltaX)+std::abs(deltaY))/1.07 > (robot_radius + object_radius));   // R+r < EuclideanDistance / sqrt(2) <= D
+=======
+    return (std::sqrt((deltaX * deltaX)+(deltaY * deltaY)) > (robot_radius + object_radius));   // R+r < EuclideanDistance / sqrt(2) <= D
+>>>>>>> f3a89e1bf593f4bff7357d8d9b6a4ae6797fa88c
   }
 
   bool free_inside(const rrt_implement::ellipsoid &robot, const rrt_implement::ellipsoid &object){
@@ -53,8 +57,12 @@ namespace rrt{
     double inter_angle = std::atan( deltaY / deltaX );
     double robot_radius = ellipsoidRadius(robot.semi_axes[0], robot.semi_axes[1], robot.angle+inter_angle);
     double object_radius = ellipsoidRadius(object.semi_axes[0], object.semi_axes[1], object.angle+inter_angle);
+<<<<<<< HEAD
 //    return (std::sqrt((deltaX * deltaX)+(deltaY * deltaY)) < (object_radius - robot_radius));       // R-r > EuclideanDistance > D
     return ((std::abs(deltaX)+std::abs(deltaY))*1.1 < (object_radius - robot_radius));
+=======
+    return (std::sqrt((deltaX * deltaX)+(deltaY * deltaY)) < (object_radius - robot_radius));       // R-r > EuclideanDistance > D
+>>>>>>> f3a89e1bf593f4bff7357d8d9b6a4ae6797fa88c
   }
 
   bool isStateInCollision(rrt_implement::collision_detectionRequest &req, rrt_implement::collision_detectionResponse &res){

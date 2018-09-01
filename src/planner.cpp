@@ -17,8 +17,9 @@
 #include <rrt_implement/trajectory.h>
 #include <rrt_implement/ellipsoid.h>
 #include <rrt_implement/world.h>
+#include <rrt_implement/collision_detection.h>
 
-#include <moveit_msgs/PlanningScene.h>
+/*#include <moveit_msgs/PlanningScene.h>
 #include <moveit_msgs/RobotState.h>
 #include <moveit/collision_detection/collision_common.h>
 #include <moveit/collision_detection_fcl/collision_common.h>
@@ -30,11 +31,11 @@
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/geometric/planners/prm/PRMstar.h>
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
-#include <ompl/geometric/SimpleSetup.h>
+#include <ompl/geometric/SimpleSetup.h>*/
 
 using namespace rrt;
-namespace ob = ompl::base;
-namespace og = ompl::geometric;
+/*namespace ob = ompl::base;
+namespace og = ompl::geometric;*/
 
 
 PlanningAct::PlanningAct(Position &start, Position &goal):
@@ -52,29 +53,30 @@ void rrt::setEnvironment(){
   robot_start.center[0]=-3.0;
   robot_start.center[1]=2.0;
   robot_start.angle=PI/2;
-  robot_start.epsilon=2.0;
+//  robot_start.epsilon=2.0;
 
   arena.semi_axes.resize(2);
   arena.semi_axes[0] = 8.0;
   arena.semi_axes[1] = 6.0;
   arena.semi_axes[2] = 0.0;
   arena.angle = 0.0;
-  arena.epsilon = 2.0;
+//  arena.epsilon = 2.0;
   arena.center.resize(3);
   arena.center[0] = 0.0;
   arena.center[1] = 0.0;
   arena.center[2] = 0.0;
 
-  arena_collision.semi_axes.resize(3);
+  /*arena_collision.semi_axes.resize(3);
   arena_collision.semi_axes[0] = 6.0;
   arena_collision.semi_axes[1] = 4.0;
   arena_collision.semi_axes[2] = 0.0;
   arena_collision.angle = 0.0;
-  arena_collision.epsilon = 2.0;
+//  arena_collision.epsilon = 2.0;
   arena_collision.center.resize(3);
   arena_collision.center[0] = 0.0;
   arena_collision.center[1] = 0.0;
   arena_collision.center[2] = 0.0;
+   */
 
   obstacles.resize(2);
   rrt_implement::ellipsoid obs1;
@@ -83,7 +85,7 @@ void rrt::setEnvironment(){
   obs1.semi_axes[1] = 1.0;
   obs1.semi_axes[2] = 0.0;
   obs1.angle = PI/4;
-  obs1.epsilon = 2.0;
+//  obs1.epsilon = 2.0;
   obs1.center.resize(3);
   obs1.center[0] = 0.0;
   obs1.center[1] = 1.0;
@@ -95,7 +97,7 @@ void rrt::setEnvironment(){
   obs2.semi_axes[1] = 2.0;
   obs2.semi_axes[2] = 0.0;
   obs2.angle = PI/8;
-  obs2.epsilon = 2.0;
+//  obs2.epsilon = 2.0;
   obs2.center.resize(3);
   obs2.center[0] = -3.0;
   obs2.center[1] = -3.0;
@@ -107,31 +109,29 @@ void rrt::setEnvironment(){
 }
 
 //need to complete
-bool rrt::collisionChecking(rrt_implement::ellipsoid* robot_) {
-  return false;
-}
+//bool rrt::collisionChecking(rrt_implement::ellipsoid* robot_) {
+//  return false;
+//}
 
-bool rrt::isStateValid(const Position new_position) {
-  double x = new_position.x;
-  double y = new_position.y;
-  double yaw = new_position.phi;
-  rrt_implement::ellipsoid robot;
-  robot.semi_axes =robot_start.semi_axes;
-  robot.epsilon = robot_start.epsilon;
-  robot.center.resize(3);
-  robot.center[0] = x;
-  robot.center[1] = y;
-  robot.center[2] = 0.0;
-  robot.angle = yaw;
+bool rrt::isStateValid(const Position& new_position) {
+  rrt_implement::position current_position_msg;
+  current_position_msg.x = new_position.x;
+  current_position_msg.y = new_position.y;
+  current_position_msg.phi = new_position.phi / Degree2Radian;
 
-  bool valid = false;
-  bool res = collisionChecking(&robot);
-  if(!res){
-    valid = true;
+  rrt_implement::collision_detection srv;
+  srv.request.current_position = current_position_msg;
+  srv.request.environment = world_msg;
+
+  if (client.call(srv))
+  {
+    return (!srv.response.collision);
   }
-//  std::cout <<"x: "<<x<<" y: "<< y<< " angle: "<< yaw<< std::endl;
-//  std::cout <<"Valid: "<< res<< std::endl;
-  return valid;
+  else
+  {
+    ROS_ERROR("Failed to call service collision_detection");
+    return false;
+  }
 }
 
 
@@ -185,7 +185,10 @@ bool PlanningAct::planningWithRRT(){
 //      std::cout<<" visit nearestNode";
       newPos.x = nearestNode.x + (randomPos.x - nearestNode.x) / MinDistance * xMetric;
       newPos.y = nearestNode.y + (randomPos.y - nearestNode.y) / MinDistance * yMetric;
-      newPos.phi = nearestNode.phi + (randomPos.phi - nearestNode.phi) / MinDistance * phiMetric;
+      double temp_phi = nearestNode.phi + (randomPos.phi - nearestNode.phi) / MinDistance * phiMetric;
+      while (temp_phi > phiRange) temp_phi -= phiRange;
+      while (temp_phi < 0) temp_phi += phiRange;
+      newPos.phi = temp_phi;
 //    return newPos;
       if (isStateValid(newPos)) {  //can go through
 //        std::cout<<" valid";
@@ -198,10 +201,10 @@ bool PlanningAct::planningWithRRT(){
       }
     }
     searchTimes++;
-    if (searchTimes % 500 == 0) std::cout<<"Have searched for "<<searchTimes<<" times.\n";
+    if (searchTimes % 500 == 0) std::cout<<"Have searched for "<<searchTimes<<" times.\n Succeed for "<<RRT_Tree.rrtTree.size()<<" times.\n";
   }
 
-  std::cout<<"search ends\n";
+  std::cout<<"Search ends in "<<searchTimes<<" times\n";
 //  RRT_Tree.rrtTree.resize(treeSize);
 
   if (ends){ //find trajectory
@@ -213,17 +216,17 @@ bool PlanningAct::planningWithRRT(){
     while (father > -1){
       temp_traj.x = tempNode.x;
       temp_traj.y = tempNode.y;
-      temp_traj.phi = tempNode.phi /180 * PI;
+      temp_traj.phi = tempNode.phi * Degree2Radian;
       trajectory_.push_back(temp_traj); //reverse order!!!
       tempNode = RRT_Tree.rrtTree[father];
       father = tempNode.father;
 //      std::cout<<" "<<father;
     }
-    std::cout<<"Planning succeed and start to plot trajectory.\n";
+    std::cout<<"Planning succeed and start to plot trajectory.\nTraj size:"<<trajectory_.size()<<"\n";
 //    trajectory_.resize(size);
   }
   else
-    std::cout<<"Planning Failed"<<std::endl;
+    ROS_INFO("Planning failed, too much times.");
 
   return /*planned*/ ends;
 }
@@ -253,9 +256,9 @@ int main(int argc, char **argv) {
   trajectory_pub = node_handle.advertise<rrt_implement::trajectory>("trajectory_info",1000);
 
 //  client = node_handle.serviceClient<rrt_implement::collisionCheck>("collision_check_server");
+  client = node_handle.serviceClient<rrt_implement::collision_detection>("collision_detection");
   //world init & config
   setEnvironment();
-  rrt_implement::world world_msg;
   world_msg.obstacles = obstacles;
   world_msg.obstacle_size = obstacles.size();
   world_msg.robot = robot_start;
@@ -269,7 +272,7 @@ int main(int argc, char **argv) {
   world_pub.publish(world_msg);
   ROS_INFO("world_info published");
 
-  double temp_phi = robot_start.angle /PI * 180;
+  double temp_phi = robot_start.angle /Degree2Radian;
 
 
   //init planner
@@ -281,7 +284,7 @@ int main(int argc, char **argv) {
   if (planning_succeed){
     rrt_implement::trajectory trajectory_msg;
     trajectory_msg.points = trajectory_;
-    std::cout<<trajectory_.size()<<std::endl;
+//    std::cout<<trajectory_.size()<<std::endl;
     trajectory_msg.model = robot_start;
 
     //trajectory publish

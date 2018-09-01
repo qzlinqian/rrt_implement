@@ -77,15 +77,17 @@ Trajectory_publisher::Trajectory_publisher(ros::NodeHandle &nh) {
 
 
 void Trajectory_publisher::publish_trajectory_info(const rrt_implement::trajectory::ConstPtr &msg) {
-  std::cout<<"Msg received.\n"<<"size: "<<msg->points.size();
+  std::cout<<"Msg received.\n"<<"Size: "<<msg->points.size()<<"\n";
   trajectory_objects_.resize(msg->points.size());
 
   robot_model = msg->model;
 
   int i = 0;
-  for (std::vector<rrt_implement::position>::const_iterator j=msg->points.begin();
+  /*for (std::vector<rrt_implement::position>::const_iterator j=msg->points.begin();
       j != msg->points.end(); j++){
-    rrt_implement::position temp = *j;
+    rrt_implement::position temp = *j;*/
+  for (int j=0; j<msg->points.size(); j++){
+    rrt_implement::position temp = msg->points[j];
 
     rrt_implement::ellipsoid_points srv;
 
@@ -95,6 +97,8 @@ void Trajectory_publisher::publish_trajectory_info(const rrt_implement::trajecto
     robot_model.angle = temp.phi;
     srv.request.ellipsoid = robot_model;
     srv.request.steps = steps;
+
+    std::cout<<"Point "<<j<<" : x:"<<temp.x<<" y:"<<temp.y<<" phi:"<<temp.phi<<"\n";
 
     if (point_gen_client.call(srv)){
       trajectory_objects_[i].name = "Robot" + i;
@@ -137,7 +141,7 @@ void Trajectory_publisher::plot() {
       }
 
       marker_pub_.publish(marker_lines);
-      std::cout<<"Plot trajectory.\n";
+//      std::cout<<"Plot trajectory.\n";
       sleep(2);
     }
     ros::spinOnce();

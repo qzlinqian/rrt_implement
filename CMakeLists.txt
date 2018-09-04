@@ -27,6 +27,8 @@ add_message_files (
   world.msg
   point.msg
   pointsArray.msg
+  node.msg
+  rrtGraph.msg
 )
 
 # Generate services in the 'srv' folder
@@ -76,6 +78,11 @@ target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
 add_executable(environment_pub src/environment_publisher.cpp)
 add_dependencies(environment_pub rrt_implement)
 target_link_libraries(environment_pub rrt_implement ${catkin_LIBRARIES})
+
+
+add_executable(graph_pub src/graph_publisher.cpp)
+add_dependencies(graph_pub rrt_implement)
+target_link_libraries(graph_pub rrt_implement ${catkin_LIBRARIES})
 
 
 add_executable(trajectory_pub src/trajectory_publisher.cpp)

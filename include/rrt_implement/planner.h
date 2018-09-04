@@ -13,6 +13,7 @@
 #include <rrt_implement/trajectory.h>
 #include <rrt_implement/ellipsoid.h>
 #include <rrt_implement/world.h>
+#include <rrt_implement/rrtGraph.h>
 
 #define PI 3.1416
 #define Degree2Radian PI/180;
@@ -63,6 +64,7 @@ namespace rrt{
   rrt_implement::ellipsoid arena;
   rrt_implement::ellipsoid arena_collision;
   rrt_implement::world world_msg;
+  rrt_implement::rrtGraph graph_msg;
 
   std::vector<rrt_implement::position> trajectory_;
 
@@ -71,6 +73,7 @@ namespace rrt{
 //publisher config
   ros::Publisher world_pub;
   ros::Publisher trajectory_pub;
+  ros::Publisher graph_pub;
 }
 
 #endif //PROJECT_PLANNER_H

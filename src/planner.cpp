@@ -16,6 +16,7 @@
 #include <rrt_implement/ellipsoid.h>
 #include <rrt_implement/world.h>
 #include <rrt_implement/collision_detection.h>
+#include <rrt_implement/rrtGraph.h>
 
 using namespace rrt;
 
@@ -145,8 +146,18 @@ bool PlanningAct::planningWithRRT(){
       while (temp_phi < 0) temp_phi += phiRange;
       newPos.phi = temp_phi;
       if (isStateValid(newPos)) {  //can go through
+        //insert in tree
         RRT_Tree.insert(newPos, nearestNodeID);
         ends = goalIsAchieved();
+
+
+        //insert in graph
+        rrt_implement::node temp_node;
+        temp_node.x = newPos.x;
+        temp_node.y = newPos.y;
+        temp_node.father = nearestNodeID;
+
+        graph_msg.graphNode.push_back(temp_node);
       }
     }
     searchTimes++;
@@ -197,6 +208,7 @@ int main(int argc, char **argv) {
 
   world_pub = node_handle.advertise<rrt_implement::world>("world_info", 1000);
   trajectory_pub = node_handle.advertise<rrt_implement::trajectory>("trajectory_info",1000);
+  graph_pub = node_handle.advertise<rrt_implement::rrtGraph>("graph_info", 1000);
 
 
   client = node_handle.serviceClient<rrt_implement::collision_detection>("collision_detection");
@@ -222,7 +234,25 @@ int main(int argc, char **argv) {
   Position start_position(robot_start.center[0], robot_start.center[1], temp_phi), goal_position(3,3,0);
   PlanningAct planner(start_position, goal_position);
 
+
+  //init graph
+  rrt_implement::node temp_node;
+  temp_node.x = robot_start.center[0];
+  temp_node.y = robot_start.center[1];
+  temp_node.father = -1;
+  graph_msg.graphNode.push_back(temp_node);
+
+
   bool planning_succeed = planner.planningWithRRT();
+
+
+  //publish graph
+  while (graph_pub.getNumSubscribers() < 1){
+    ROS_WARN_ONCE("Please create a subscriber for the graph_info");
+  }
+  graph_pub.publish(graph_msg);
+  ROS_INFO("graph_info published");
+
 
   if (planning_succeed){
     rrt_implement::trajectory trajectory_msg;

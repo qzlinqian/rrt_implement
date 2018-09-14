@@ -23,6 +23,7 @@
 * obstacle1
 * robot
 * trajectory
+* graph
 
 #### running note
 after `catkin_make` && `source devel/setup.bash`

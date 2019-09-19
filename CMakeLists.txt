@@ -71,32 +71,32 @@ add_library(rrt_implement
 
 
 add_executable(rrtPlanner src/planner.cpp)
-add_dependencies(rrtPlanner rrt_implement)
+add_dependencies(rrtPlanner rrt_implement ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(rrtPlanner rrt_implement ${catkin_LIBRARIES})
 
 
 add_executable(environment_pub src/environment_publisher.cpp)
-add_dependencies(environment_pub rrt_implement)
+add_dependencies(environment_pub rrt_implement ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(environment_pub rrt_implement ${catkin_LIBRARIES})
 
 
 add_executable(graph_pub src/graph_publisher.cpp)
-add_dependencies(graph_pub rrt_implement)
+add_dependencies(graph_pub rrt_implement ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(graph_pub rrt_implement ${catkin_LIBRARIES})
 
 
 add_executable(trajectory_pub src/trajectory_publisher.cpp)
-add_dependencies(trajectory_pub rrt_implement)
+add_dependencies(trajectory_pub rrt_implement ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(trajectory_pub rrt_implement ${catkin_LIBRARIES})
 
 
 add_executable(ellipsoid_point_gen_srv src/ellipsoid_point_gen.cpp)
-add_dependencies(ellipsoid_point_gen_srv rrt_implement)
+add_dependencies(ellipsoid_point_gen_srv rrt_implement ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(ellipsoid_point_gen_srv rrt_implement ${catkin_LIBRARIES})
 
 
 add_executable(collision_detection_srv src/collision_detect.cpp)
-add_dependencies(collision_detection_srv rrt_implement)
+add_dependencies(collision_detection_srv rrt_implement ${${PROJECT_NAME}_EXPORTED_TARGETS})
 target_link_libraries(collision_detection_srv rrt_implement ${catkin_LIBRARIES})
 
 
